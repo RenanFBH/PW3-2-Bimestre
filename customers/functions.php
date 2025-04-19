@@ -24,15 +24,22 @@
 	 */
 	function add() {
 		if (!empty($_POST['customer'])) {
-			$today = new DateTime("now", new DateTimeZone("America/Sao_Paulo"));
+			try {
+				$today = new DateTime("now", new DateTimeZone("America/Sao_Paulo"));
 
-			$customer              = $_POST['customer'];
-			$customer['created']  = $today->format("Y-m-d H:i:s");
-			$customer['modified'] = $customer['created'];
+				$customer = $_POST['customer'];
+				$customer['created']  = $today->format("Y-m-d H:i:s");
+				$customer['modified'] = $customer['created'];
 
-			save('customers', $customer);
-			clear_messages();
-			header('location: index.php');
+				$customer['foto'] = empty($_FILES["foto"]["name"]) ? "semimagem.jpg" : upload_foto($_FILES["foto"]);
+
+				save('customers', $customer);
+				clear_messages();
+				header('location: index.php');
+			} catch (Exception $e) {
+				$_SESSION['message'] = "Aconteceu um erro: " . $e->getMessage();
+				$_SESSION['type'] = "danger";
+			}
 		}
 	}
 
@@ -46,8 +53,19 @@
 			$id = $_GET['id'];
 
 			if (isset($_POST['customer'])) {
-				$customer              = $_POST['customer'];
+				$customer = $_POST['customer'];
 				$customer['modified'] = $now->format("Y-m-d H:i:s");
+
+				
+				if (!empty($_FILES["foto"]["name"])) {
+					$foto_antiga = find('gerentes', $id)['foto'];
+					if ($foto_antiga && $foto_antiga != "semimagem.jpg") {
+						@unlink("fotos/" . $foto_antiga);
+					}
+					$customer['foto'] = upload_foto($_FILES["foto"]);
+				} else {
+					$customer['foto'] = find('customers', $id)['foto'];
+				}
 
 				update('customers', $id, $customer);
 				clear_messages();
@@ -59,6 +77,35 @@
 		} else {
 			header('location: index.php');
 		}
+	}
+
+	/**
+	 * Função auxiliar de upload de foto
+	 */
+	function upload_foto($foto) {
+		$pasta_destino = "fotos/";
+		$nomearquivo = basename($foto["name"]);
+		$arquivo_destino = $pasta_destino . $nomearquivo;
+
+		if (!file_exists($arquivo_destino)) {
+			$tipo_arquivo = strtolower(pathinfo($arquivo_destino, PATHINFO_EXTENSION));
+			$tamanho_arquivo = $foto["size"];
+			$nome_temp = $foto["tmp_name"];
+
+			if (!getimagesize($nome_temp)) {
+				throw new Exception("O arquivo não é uma imagem!");
+			}
+			if ($tamanho_arquivo > 5000000) {
+				throw new Exception("O arquivo é muito grande!");
+			}
+			if (!in_array($tipo_arquivo, ["jpg", "jpeg", "png", "gif"])) {
+				throw new Exception("Tipo de arquivo inválido!");
+			}
+			if (!move_uploaded_file($nome_temp, $arquivo_destino)) {
+				throw new Exception("Erro ao mover o arquivo para o destino.");
+			}
+		}
+		return $nomearquivo;
 	}
 
 	/**
@@ -78,5 +125,90 @@
 		clear_messages();
 		header('location: index.php');
 	}
+
+
+	/**
+	* Gerando PDF
+	*/
+	function pdf_clientes($p = null)
+	{
+		ob_start();
+		include PDF;
+		$pdf = new PDF();
+		$pdf->AliasNbPages();
+		$pdf->AddPage('L'); // Paisagem para caber mais colunas
+		$pdf->Titulo("Lista de Clientes");
+
+		// Definir larguras das colunas (total não deve exceder 280mm em paisagem)
+		$larguras = [15, 50, 30, 30, 30, 25, 30, 30];
+		$headers = ['ID', 'Nome', 'CPF/CNPJ', 'Cidade', 'Estado', 'Telefone', 'Modificado', 'Foto'];
+		
+		$pdf->Cabecalho($headers, $larguras);
+
+		$customers = $p ? filter("customers", "name LIKE '%$p%'") : find_all("customers");
+
+		foreach ($customers as $u) {
+			$pdf->SetFont('Arial', '', 9);
+			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
+			
+			// Alternar cor de fundo para linhas
+			if($u['id'] % 2 == 0) {
+				$pdf->SetFillColor(229, 243, 255); // Azul claro
+			} else {
+				$pdf->SetFillColor(255, 255, 255); // Branco
+			}
+
+			// Altura da linha 3 vezes maior (30mm)
+			$alturaLinha = 30;
+			
+			// Células de texto
+			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
+			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['name']), 1, 0, 'L', true);
+			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($u['cpf_cnpj']), 1, 0, 'C', true);
+			$pdf->Cell($larguras[3], $alturaLinha, $pdf->converteTexto($u['city']), 1, 0, 'L', true);
+			$pdf->Cell($larguras[4], $alturaLinha, $pdf->converteTexto($u['state']), 1, 0, 'C', true);
+			$pdf->Cell($larguras[5], $alturaLinha, $pdf->converteTexto($u['phone']), 1, 0, 'C', true);
+			
+			// Formatar data modificada
+			$modified = !empty($u['modified']) ? date('d/m/Y H:i', strtotime($u['modified'])) : '';
+			$pdf->Cell($larguras[6], $alturaLinha, $modified, 1, 0, 'C', true);
+
+			// Célula para a foto
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$pdf->Cell($larguras[7], $alturaLinha, '', 1, 0, 'C', true);
+
+			// Adicionar foto (se existir)
+			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
+			$foto = "fotos/" . $nomeFoto;
+
+			// Ajustar tamanho da imagem proporcionalmente à altura da linha
+			$larguraImagem = 25; // Aumentei um pouco a largura
+			$alturaImagem = 25;  // Aumentei um pouco a altura
+			$offsetX = $x + ($larguras[7] - $larguraImagem) / 2;
+			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
+
+			// Centralizar a imagem vertical e horizontalmente
+			try {
+				$pdf->Image($foto, $offsetX, $offsetY, $larguraImagem, $alturaImagem);
+			} catch (Exception $e) {
+				// Caso haja erro ao carregar a imagem, exibe texto
+				$pdf->SetXY($x, $y);
+				$pdf->Cell($larguras[7], $alturaLinha, 'Imagem não encontrada', 0, 0, 'C');
+			}
+
+			$pdf->Ln();
+		}
+
+		// Adicionar data de emissão do relatório
+		$pdf->Ln(10);
+		$pdf->SetFont('Arial', 'I', 10);
+		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
+
+		ob_clean();
+		$pdf->Output('D', 'clientes_' . date('Ymd_His') . '.pdf');
+		ob_end_flush();
+	}
+
 
 ?>

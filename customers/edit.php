@@ -1,32 +1,40 @@
 <?php 
-	include("functions.php");
-	session_start();
-	if (!isset($_SESSION)) session_start();
-	if (isset($_SESSION["user"])){	
-	} else {
-		$_SESSION["message"] = "Você deve estar logado para acessar esse recurso!";
-		$_SESSION["type"] = "danger";
+	include("functions.php"); 
+    session_start();
+    if (!isset($_SESSION)) session_start();
+    if (!isset($_GET['id']) || empty($_GET['id'])) {
+        $_SESSION["message"] = "ID inválido ou não fornecido!";
+        $_SESSION["type"] = "danger";
+        header("Location: " . BASEURL . "index.php");
+        exit;
+    }
+    if (isset($_SESSION["user"])) {	
+    } else {
+        $_SESSION["message"] = "Você deve estar logado para acessar esse recurso!";
+        $_SESSION["type"] = "danger";
 		header("Location: " . BASEURL . "index.php");
-		exit;
-	}
-	add();
-	include(HEADER_TEMPLATE);
+        exit;
+    }
+    edit();
+    include(HEADER_TEMPLATE); 
 ?>
 			<div class="container">
 				<div class="card rounded-4">
-					<h2 class="text-center">Cadastrar Cliente</h2>
+					<h2 class="text-center">Editar</h2>
 					<hr>
-					<form action="add.php" onsubmit="return validar()" method="post" enctype="multipart/form-data" class="row">
+					<form action="edit.php?id=<?php echo $customer['id']; ?>" onsubmit="return validar()" method="post" enctype="multipart/form-data" class="row">
 						<div class="col-lg-4">
 							<div class="box">
 								<div class="input-box" id="uploadArea">
 									<h2 class="upload-area-title">Imagem do Cliente</h2>
-									<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
-									<label for="upload" class="uploadlabel" id="uploadLabel">
-										<span><i class="fa fa-cloud-upload"></i></span>
-										<p>Clique para fazer Upload</p>
-									</label>
-									<img id="imgPreview" style="display:none; width: 100%; margin-top: 10px;" />
+									<div class="upload-wrapper" style="position:relative; width:100%; height:100%;">
+										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
+										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:90%;">
+											<span><i class="fa fa-cloud-upload"></i></span>
+											<p>Clique para fazer Upload</p>
+										</label>
+										<img id="imgPreview" src="fotos/<?php echo $customer['foto']; ?>" style="display: block; width: 100%; margin-top: 10px;" />
+									</div>
 								</div>
 							</div>
 						</div>
@@ -34,22 +42,22 @@
 							<div class="col-lg-4">
 								<div class="wrapper">
 									<div class="input-data">
-										<input type="text" name="customer[name]" maxlength="50" required>
+										<input type="text" name="customer[name]"  maxlength="50" value="<?php echo $customer['name']; ?>" required>
 										<div class="underline"></div>
 										<label>Nome / Razão Social</label>
 									</div>
 									<div class="input-data">
-										<input id="inputCpfCnpj" name="customer[cpf_cnpj]"  type="text" required>
+										<input id="inputCpfCnpj" name="customer[cpf_cnpj]"  type="text" value="<?php echo $customer['cpf_cnpj']; ?>" required>
 										<div class="underline"></div>
 										<label>CNPJ / CPF</label>
 									</div>
 									<div class="input-data margin-input-mobile">
 										<label class="margin-select margin-select-mobile" for="campo3">Data de nascimento</label>
-										<input type="date" name="customer[birthdate]" required>
+										<input type="date" name="customer[birthdate]" value="<?php echo formatadata($customer['birthdate'], "Y-m-d"); ?>" required>
 										<div class="underline"></div>
 									</div>
 									<div class="input-data">
-										<input type="text" name="customer[address]" maxlength="50" required>
+										<input type="text" name="customer[address]" maxlength="50" value="<?php echo $customer['address']; ?>" required>
 										<div class="underline"></div>
 										<label>Endereço</label>
 									</div>
@@ -58,22 +66,22 @@
 							<div class="col-lg-4">
 								<div class="wrapper">
 									<div class="input-data">
-										<input type="text" name="customer[hood]" maxlength="50" required>
+										<input type="text" name="customer[hood]" maxlength="50" value="<?php echo $customer['hood']; ?>" required>
 										<div class="underline"></div>
 										<label>Bairro</label>
 									</div>
 									<div class="input-data">
-										<input id="inputCep" name="customer[zip_code]" type="text" required>
+										<input id="inputCep" name="customer[zip_code]"type="text" value="<?php echo $customer['zip_code']; ?>" required>
 										<div class="underline"></div>
 										<label>CEP</label>
 									</div>
 									<div class="input-data">
-										<input type="text" name="customer[city]" maxlength="50" required>
+										<input type="text" name="customer[city]" maxlength="50" value="<?php echo $customer['city']; ?>" required>
 										<div class="underline"></div>
 										<label>Município</label>
 									</div>
 									<div class="input-data">
-										<input id="inputTel" name="customer[phone]" type="text" required>
+										<input id="inputTel" name="customer[phone]" type="text" value="<?php echo $customer['phone']; ?>" required>
 										<div class="underline"></div>
 										<label>Telefone</label>
 									</div>
@@ -82,45 +90,45 @@
 							<div class="col-lg-4">
 								<div class="wrapper">
 									<div class="input-data">
-										<input id="inputCel" name="customer[mobile]" type="text" required>
+										<input id="inputCel" name="customer[mobile]" type="text" value="<?php echo $customer['mobile']; ?>" required>
 										<div class="underline"></div>
 										<label>Celular</label>
 									</div>
 									<div class="input-data margin-input margin-input-mobile">
 										<label class="margin-select margin-select-mobile" for="campo3">UF</label>
 										<select class="form-select" name="customer[state]" required>
-											<option value="" selected disabled>Selecionar</option>
-											<option value="AC">AC</option>
-											<option value="AL">AL</option>
-											<option value="AP">AP</option>
-											<option value="AM">AM</option>
-											<option value="BA">BA</option>
-											<option value="CE">CE</option>
-											<option value="DF">DF</option>
-											<option value="ES">ES</option>
-											<option value="GO">GO</option>
-											<option value="MA">MA</option>
-											<option value="MT">MT</option>
-											<option value="MS">MS</option>
-											<option value="MG">MG</option>
-											<option value="PA">PA</option>
-											<option value="PB">PB</option>
-											<option value="PR">PR</option>
-											<option value="PE">PE</option>
-											<option value="PI">PI</option>
-											<option value="RJ">RJ</option>
-											<option value="RN">RN</option>
-											<option value="RS">RS</option>
-											<option value="RO">RO</option>
-											<option value="RR">RR</option>
-											<option value="SC">SC</option>
-											<option value="SP">SP</option>
-											<option value="SE">SE</option>
-											<option value="TO">TO</option>
+										<option value="" selected disabled>Selecionar</option>
+										<option value="AC" <?php echo ($customer['state'] == 'AC') ? 'selected' : ''; ?>>AC</option>
+										<option value="AL" <?php echo ($customer['state'] == 'AL') ? 'selected' : ''; ?>>AL</option>
+										<option value="AP" <?php echo ($customer['state'] == 'AP') ? 'selected' : ''; ?>>AP</option>
+										<option value="AM" <?php echo ($customer['state'] == 'AM') ? 'selected' : ''; ?>>AM</option>
+										<option value="BA" <?php echo ($customer['state'] == 'BA') ? 'selected' : ''; ?>>BA</option>
+										<option value="CE" <?php echo ($customer['state'] == 'CE') ? 'selected' : ''; ?>>CE</option>
+										<option value="DF" <?php echo ($customer['state'] == 'DF') ? 'selected' : ''; ?>>DF</option>
+										<option value="ES" <?php echo ($customer['state'] == 'ES') ? 'selected' : ''; ?>>ES</option>
+										<option value="GO" <?php echo ($customer['state'] == 'GO') ? 'selected' : ''; ?>>GO</option>
+										<option value="MA" <?php echo ($customer['state'] == 'MA') ? 'selected' : ''; ?>>MA</option>
+										<option value="MT" <?php echo ($customer['state'] == 'MT') ? 'selected' : ''; ?>>MT</option>
+										<option value="MS" <?php echo ($customer['state'] == 'MS') ? 'selected' : ''; ?>>MS</option>
+										<option value="MG" <?php echo ($customer['state'] == 'MG') ? 'selected' : ''; ?>>MG</option>
+										<option value="PA" <?php echo ($customer['state'] == 'PA') ? 'selected' : ''; ?>>PA</option>
+										<option value="PB" <?php echo ($customer['state'] == 'PB') ? 'selected' : ''; ?>>PB</option>
+										<option value="PR" <?php echo ($customer['state'] == 'PR') ? 'selected' : ''; ?>>PR</option>
+										<option value="PE" <?php echo ($customer['state'] == 'PE') ? 'selected' : ''; ?>>PE</option>
+										<option value="PI" <?php echo ($customer['state'] == 'PI') ? 'selected' : ''; ?>>PI</option>
+										<option value="RJ" <?php echo ($customer['state'] == 'RJ') ? 'selected' : ''; ?>>RJ</option>
+										<option value="RN" <?php echo ($customer['state'] == 'RN') ? 'selected' : ''; ?>>RN</option>
+										<option value="RS" <?php echo ($customer['state'] == 'RS') ? 'selected' : ''; ?>>RS</option>
+										<option value="RO" <?php echo ($customer['state'] == 'RO') ? 'selected' : ''; ?>>RO</option>
+										<option value="RR" <?php echo ($customer['state'] == 'RR') ? 'selected' : ''; ?>>RR</option>
+										<option value="SC" <?php echo ($customer['state'] == 'SC') ? 'selected' : ''; ?>>SC</option>
+										<option value="SP" <?php echo ($customer['state'] == 'SP') ? 'selected' : ''; ?>>SP</option>
+										<option value="SE" <?php echo ($customer['state'] == 'SE') ? 'selected' : ''; ?>>SE</option>
+										<option value="TO" <?php echo ($customer['state'] == 'TO') ? 'selected' : ''; ?>>TO</option>
 										</select>
 									</div>
 									<div class="input-data">
-										<input id="inputIe" name="customer[ie]" type="text" required>
+										<input id="inputIe" name="customer[ie]" type="text" value="<?php echo $customer['ie']; ?>" required>
 										<div class="underline"></div>
 										<label>Inscrição Estadual</label>
 									</div>
@@ -140,14 +148,31 @@
 			<script>
 				const uploadInput = document.getElementById('upload');
 				const uploadLabel = document.getElementById('uploadLabel');
-				const imgPreview = document.getElementById('imgPreview');
 				const removeBtn = document.getElementById('removeBtn');
 				const inputTel = document.getElementById('inputTel');
 				const inputCel = document.getElementById('inputCel');
 				const inputCep = document.getElementById('inputCep');
 				const inputCpfCnpj = document.getElementById('inputCpfCnpj');
 				const inputIe = document.getElementById('inputIe');
+				const imgPreview = document.getElementById('imgPreview');
+				const inputUpload = document.getElementById('uploadLabel');
+				const wrapper = document.querySelector('.upload-wrapper');
 
+				window.onload = () => {
+					inputTel.oninput();
+					inputCel.oninput();
+					inputCep.oninput();
+					inputCpfCnpj.oninput();
+					inputIe.oninput();
+				};
+
+				wrapper.addEventListener('mouseover', () => {
+					inputUpload.style.display = 'flex';
+				});
+
+				wrapper.addEventListener('mouseout', () => {
+					inputUpload.style.display = 'none';
+				});
 
 				uploadInput.addEventListener('change', function () {
 				const file = this.files[0];
@@ -165,9 +190,8 @@
 
 				removeBtn.addEventListener('click', function () {
 					uploadInput.value = ''; 
-					imgPreview.style.display = 'none';
-					imgPreview.src = '';
-					uploadLabel.style.display = 'flex'; 
+					imgPreview.style.display = 'block';
+					imgPreview.src = "fotos/semimagem.jpg";
 					removeBtn.style.display = 'none'; 
 				});
 

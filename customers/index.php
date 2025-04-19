@@ -1,8 +1,17 @@
 <?php
+	ob_start();
 	include("functions.php");
 	session_start();
 	index();
 	include(HEADER_TEMPLATE); 
+	if (isset($_GET['pdf'])) {
+		if ($_GET['pdf'] == "ok") {
+			pdf_clientes();
+		} else {
+			pdf_clientes($_GET['pdf']);
+		}
+	}
+	ob_end_flush();
 ?>
 			<div class="container-lg position-relative z-1 header-index rounded border">
 				<header class="mt-2">
@@ -21,7 +30,11 @@
 						<div class="col-12 col-md-8 mt-2">
 							<div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
 								<a class="btn btn-custom-2" href="add.php"><i class="fa fa-plus"></i> Novo Cliente</a>
-								<a class="btn btn-custom-2" href="index.php"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php if($_SERVER["REQUEST_METHOD"] == "POST") : ?>
+								<a class="btn btn-custom-2" href="index.php?pdf=<?php echo $_POST['users']; ?>" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php else : ?>
+								<a class="btn btn-custom-2" href="index.php?pdf=ok" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php endif; ?>
 								<a class="btn btn-custom-2" href="index.php"><i class="fa fa-refresh"></i> Atualizar</a>
 							</div>
 						</div>
@@ -63,16 +76,16 @@
 	<?php $data = new Datetime ($customer['modified'],new DateTimeZone("America/Sao_Paulo")); ?>
 								<td><?php
 									if(!empty($customer['foto'])){
-										echo "<img src=\"fotos/{$customer['foto']}\" class=\"shadow p-1 mb-1 bg-body rounded\" width=\"100px\">";
+										echo "<img src=\"fotos/{$customer['foto']}\" class=\"shadow p-1 mb-1 bg-body rounded\" width=\"100px\" height=\"100px\">";
 									}else{
-										echo "<img src=\"fotos/semimagem.jpg\" class=\"shadow p-1 mb-1 bg-body rounded\" width=\"100px\">";
+										echo "<img src=\"fotos/semimagem.jpg\" class=\"shadow p-1 mb-1 bg-body rounded\" width=\"100px\" height=\"100px\">";
 									}
 								?></td>
 								<td class="actions text-right">
 									<div class="row">
-										<a href="view.php?id=<?php echo $customer['id']; ?>" class="btn btn-view col-10 mt-1"><i class="fa fa-eye"></i> Visualizar</a>
-										<a href="edit.php?id=<?php echo $customer['id']; ?>" class="btn btn-edit col-10 mt-1"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-										<a href="#" class="btn btn-delete col-10  mt-1" data-bs-toggle="modal" data-bs-target="#delete-modal" data-customer="<?php echo $customer['id']; ?>">
+										<a href="view.php?id=<?php echo $customer['id']; ?>" class="btn btn-custom-2 col-10 mt-1"><i class="fa fa-eye"></i> Visualizar</a>
+										<a href="edit.php?id=<?php echo $customer['id']; ?>" class="btn btn-custom-2 col-10 mt-1"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
+										<a href="#" class="btn btn-custom-2 col-10  mt-1" data-bs-toggle="modal" data-bs-target="#delete-modal" data-customer="<?php echo $customer['id']; ?>">
 											<i class="fa fa-trash"></i> Excluir
 										</a>
 									</div>

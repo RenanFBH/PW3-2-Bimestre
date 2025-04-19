@@ -32,34 +32,35 @@ USE `wda_crud`;
 
 CREATE TABLE `customers` (
   `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(50) NOT NULL,
   `cpf_cnpj` varchar(14) NOT NULL,
   `birthdate` datetime NOT NULL,
-  `address` varchar(255) NOT NULL,
-  `hood` varchar(100) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `hood` varchar(50) NOT NULL,
   `zip_code` varchar(8) NOT NULL,
-  `city` varchar(100) NOT NULL,
+  `city` varchar(50) NOT NULL,
   `state` varchar(2) NOT NULL,
   `phone` varchar(13) NOT NULL,
   `mobile` varchar(13) NOT NULL,
   `ie` varchar(12) NOT NULL,
   `created` datetime NOT NULL,
-  `modified` datetime NOT NULL
+  `modified` datetime NOT NULL,
+  `foto` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `customers`
 --
 
-INSERT INTO `customers` (`id`, `name`, `cpf_cnpj`, `birthdate`, `address`, `hood`, `zip_code`, `city`, `state`, `phone`, `mobile`, `ie`, `created`, `modified`) VALUES
-(1, 'Fulano de Tal', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(2, 'Ciclano de Tal', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(3, 'Customer 3', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(4, 'Customer 4', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(5, 'Customer 5', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(6, 'Customer 6', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(7, 'Customer 7', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00'),
-(8, 'Customer 8', '123.456.789-00', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15 55663322', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00');
+INSERT INTO `customers` (`id`, `name`, `cpf_cnpj`, `birthdate`, `address`, `hood`, `zip_code`, `city`, `state`, `phone`, `mobile`, `ie`, `created`, `modified`, `foto`) VALUES
+(1, 'Fulano de Tal', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(2, 'Ciclano de Tal', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(3, 'Customer 3', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(4, 'Customer 4', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(5, 'Customer 5', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(6, 'Customer 6', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(7, 'Customer 7', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg'),
+(8, 'Customer 8', '12345678900', '1989-01-01 00:00:00', 'Rua da Web, 123', 'Internet', '12345678', 'Teste', 'SP', '15556633221', '15955663322', '12345678', '2016-05-24 00:00:00', '2016-05-24 00:00:00', 'semimagem.jpg');
 
 -- --------------------------------------------------------
 

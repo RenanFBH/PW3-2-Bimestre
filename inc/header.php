@@ -32,17 +32,17 @@
 						<ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
 							<!-- Clientes -->
 							<div class="dropstart img-offcanvas text-center">
+<?php if (isset($_SESSION["user"])): ?>	
 								<a  href="#" class="nav-link-2 mx-lg-2 text" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 									<img src="<?php echo BASEURL . 'usuarios/fotos/' . $_SESSION['foto']; ?>" alt="Foto do Usuário" class="rounded-circle"  id="foto-usuario" >
 								</a>	
+<?php else: ?>
 								<ul class="dropdown-menu text">
-									<li>
-										<a class="dropdown-item" href="<?php echo BASEURL . 'usuarios/view.php?id=' . $_SESSION['id']; ?>"><i class="fa-regular fa-id-card"></i> Ver perfil</a>
-									</li>
 									<li>
 										<a class="dropdown-item" href="<?php echo BASEURL; ?>inc/logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
 									</li>	
 								</ul>
+<?php endif; ?>
 							</div>
 							<li class="nav-item">
 								<div class="dropdown">
