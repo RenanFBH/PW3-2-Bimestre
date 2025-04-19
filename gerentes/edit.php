@@ -27,7 +27,7 @@
 						    <div class="box">
 								<div class="input-box" id="uploadArea">
 									<h2 class="upload-area-title">Imagem do Gerente</h2>
-									<div class="upload-wrapper" style="position:relative; width:100%; max-width:300px; height:100%;">
+									<div class="upload-wrapper" style="position:relative; width:100%; max-width:100%; height:90%;">
 										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
 										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:90%;">
 											<span><i class="fa fa-cloud-upload"></i></span>
@@ -106,7 +106,7 @@
 					inputCpfCnpj.oninput();
 					inputIe.oninput();
 				};
-
+          
                 wrapper.addEventListener('mouseover', () => {
 					inputUpload.style.display = 'flex';
 				});
@@ -135,5 +135,5 @@
 					imgPreview.src = "fotos/semimagem.jpg";
 					removeBtn.style.display = 'none'; 
 				});
-            </script>
+			</script>
 <?php include(FOOTER_TEMPLATE); ?>

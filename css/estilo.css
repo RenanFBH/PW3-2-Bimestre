@@ -332,6 +332,12 @@ main {
 .foto-view {
 	width:100%;
 }
+.offcanvas-title {
+	color:#320679;
+}
+.offcanvas-body {
+	background-color:#e6f2ff;
+}
 
 /*--------------------IDs--------------------*/
 #foto-usuario {
@@ -585,7 +591,14 @@ main {
 		margin-top:30%;
 	}
 	.nav-item {
-		margin:10vh;
+		margin:0;
+		margin-left:10%;
+	}
+	.logout-nav {
+		display:block !important;
+	}
+	.margin-nav-link {
+		margin-top:10%;
 	}
 	.nav-link:hover::before, .nav-link.active::before {
 		width:100%;
@@ -596,14 +609,14 @@ main {
 		margin-right:5%;
 	}	
 	#foto-usuario {
-		width:200px;
-		height:200px;
+		width:300px;
+		height:300px;
 	}
 	.img-navbar {
 		display:none;
 	}
 	.img-offcanvas {
-		display:block;
+		display:contents;
 	}
 	.box {
 		max-width:100%;
@@ -650,6 +663,22 @@ main {
 	#img-border-view {
 		width:60%;
 	}
+	#login-mobile {
+        order: -1;
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .offcanvas-body {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar-nav {
+        width: 100%;
+    }
 }
 @media (max-width:767px) {
 	.login-container {

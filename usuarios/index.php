@@ -1,4 +1,5 @@
 <?php
+	ob_start();
     include("functions.php");
 	session_start();
 	if (!isset($_SESSION)) session_start();
@@ -17,13 +18,21 @@
 	}
 	if(isset($_GET['pdf'])){
 		if($_GET['pdf'] == "ok"){
-			pdf();
+			pdf_usuarios();
 		} else {
-			pdf($_GET['pdf']);
+			pdf_usuarios($_GET['pdf']);
 		}
 	}		
 	index();
 	include(HEADER_TEMPLATE);
+	if (isset($_GET['pdf'])) {
+		if ($_GET['pdf'] == "ok") {
+			pdf_gerentes();
+		} else {
+			pdf_gerentes($_GET['pdf']);
+		}
+	}
+	ob_end_flush();
 ?>
 			<div class="container-lg position-relative z-1 header-index rounded border">
 				<header class="mt-2">
@@ -42,7 +51,11 @@
 						<div class="col-12 col-md-8 mt-2">
 							<div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
 								<a class="btn btn-custom-2" href="add.php"><i class="fa fa-plus"></i> Novo Usuário</a>
-								<a class="btn btn-custom-2" href="index.php"><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php if($_SERVER["REQUEST_METHOD"] == "POST") : ?>
+								<a class="btn btn-custom-2" href="index.php?pdf=<?php echo $_POST['user']; ?>" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php else : ?>
+								<a class="btn btn-custom-2" href="index.php?pdf=ok" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+<?php endif; ?>
 								<a class="btn btn-custom-2" href="index.php"><i class="fa fa-refresh"></i> Atualizar</a>
 							</div>
 						</div>

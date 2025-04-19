@@ -30,21 +30,20 @@
 					</div>
 					<div class="offcanvas-body d-flex justify-content-between align-items-center w-100">
 						<ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
-							<!-- Clientes -->
-							<div class="dropstart img-offcanvas text-center">
 <?php if (isset($_SESSION["user"])): ?>	
-								<a  href="#" class="nav-link-2 mx-lg-2 text" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-									<img src="<?php echo BASEURL . 'usuarios/fotos/' . $_SESSION['foto']; ?>" alt="Foto do Usuário" class="rounded-circle"  id="foto-usuario" >
-								</a>	
-<?php else: ?>
-								<ul class="dropdown-menu text">
-									<li>
-										<a class="dropdown-item" href="<?php echo BASEURL; ?>inc/logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-									</li>	
-								</ul>
-<?php endif; ?>
+							<div class="w-100 d-flex d-lg-none justify-content-center my-3">
+								<img src="<?php echo BASEURL . 'usuarios/fotos/' . $_SESSION['foto']; ?>" alt="Foto do Usuário" class="rounded-4 nav-link-2" id="foto-usuario"/>
 							</div>
-							<li class="nav-item">
+<?php else: ?>
+								<a href="<?php echo BASEURL; ?>inc/login.php" class="login-button d-block d-lg-none" id="login-mobile">
+								<i class="fa-solid fa-right-to-bracket"></i> Login
+							</a>
+<?php endif; ?>
+
+
+
+
+							<li class="nav-item margin-nav-link">
 								<div class="dropdown">
 									<a class="nav-link mx-lg-2 dropdown-toggle text" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										<i class="fa-solid fa-user"></i> 
@@ -60,7 +59,10 @@
 									</ul>
 								</div>
 							</li>
-							<!-- Gerentes -->
+
+
+
+
 							<li class="nav-item">
 								<div class="dropdown">
 									<a class="nav-link mx-lg-2 dropdown-toggle text" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -79,8 +81,7 @@
 							</li>
 <?php if (isset($_SESSION["user"])): ?>
 <?php if ($_SESSION["user"] == "admin"): ?>
-							<!-- Usuários -->
-							<li class="nav-item">
+							<li class="nav-item margin-nav">
 								<div class="dropdown">
 									<a class="nav-link mx-lg-2 dropdown-toggle text" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 										<i class="fa-solid fa-address-card"></i> 
@@ -95,11 +96,22 @@
 										</li>								
 									</ul>
 								</div>
+							</li>
+
+
+
+
+
+
+							<li class="nav-item margin-nav logout-nav" style="display:none;">
+								<a class="nav-link mx-lg-2" href="<?php echo BASEURL; ?>inc/logout.php">
+									<i class="fa-solid fa-right-from-bracket"></i> 
+									Logout
+								</a>
 							</li>	
 <?php endif; ?>
 <?php endif; ?>
 						</ul>
-						<!-- Login/Logout -->
 						<div class="d-flex align-items-center ms-auto margin-offcanvas">
 <?php if (isset($_SESSION["user"])): ?>		
 							<div class="dropstart img-navbar">
@@ -113,7 +125,7 @@
 								</ul>
 							</div>
 <?php else: ?>
-							<a href="<?php echo BASEURL; ?>inc/login.php" class="login-button">
+							<a href="<?php echo BASEURL; ?>inc/login.php" class="login-button login-mobile-2 d-none d-lg-block" id="login-mobile">
 								<i class="fa-solid fa-right-to-bracket"></i> Login
 							</a>
 <?php endif; ?>

@@ -31,7 +31,7 @@
 							<div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
 								<a class="btn btn-custom-2" href="add.php"><i class="fa fa-plus"></i> Novo Cliente</a>
 <?php if($_SERVER["REQUEST_METHOD"] == "POST") : ?>
-								<a class="btn btn-custom-2" href="index.php?pdf=<?php echo $_POST['users']; ?>" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
+								<a class="btn btn-custom-2" href="index.php?pdf=<?php echo $_POST['name']; ?>" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
 <?php else : ?>
 								<a class="btn btn-custom-2" href="index.php?pdf=ok" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
 <?php endif; ?>

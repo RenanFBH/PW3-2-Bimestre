@@ -130,4 +130,83 @@
 		header('location: index.php');
 	}
 
+	/**
+	* Gerando PDF
+	*/
+	function pdf_gerentes($p = null)
+	{
+		ob_start();
+		include PDF;
+		$pdf = new PDF();
+		$pdf->AliasNbPages();
+		$pdf->AddPage('L'); // Paisagem para caber mais colunas
+		$pdf->Titulo("Lista de Gerentes");
+
+		// Definir larguras das colunas (total não deve exceder 280mm em paisagem)
+		$larguras = [15, 50, 50, 50, 30, 30];
+		$headers = ['ID', 'Nome', 'Endereço', 'Departamento', 'Data Nasc.', 'Foto'];
+		
+		$pdf->Cabecalho($headers, $larguras);
+
+		$gerentes = $p ? filter("gerentes", "name LIKE '%$p%'") : find_all("gerentes");
+
+		foreach ($gerentes as $u) {
+			$pdf->SetFont('Arial', '', 9);
+			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
+			
+			// Alternar cor de fundo entre branco e cinza claro
+			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
+
+			$alturaLinha = 30;
+
+			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
+			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['nome']), 1, 0, 'C', true); // Alinhado ao centro
+
+			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($u['endereco']), 1, 0, 'C', true);
+			$pdf->Cell($larguras[3], $alturaLinha, $pdf->converteTexto($u['depto']), 1, 0, 'C', true);
+
+			// Formatar data de nascimento
+			$formattedDate = !empty($u['datanasc']) ? date('d/m/Y', strtotime($u['datanasc'])) : '';
+			$pdf->Cell($larguras[4], $alturaLinha, $formattedDate, 1, 0, 'C', true);
+
+			// Imagem com borda e efeito "rounded"
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$pdf->Cell($larguras[5], $alturaLinha, '', 1, 0, 'C', true);
+
+			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
+			$foto = "fotos/" . $nomeFoto;
+
+			$larguraImagem = 25;
+			$alturaImagem = 25;
+			$offsetX = $x + ($larguras[5] - $larguraImagem) / 2;
+			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
+
+			try {
+				// Simula borda com retângulo atrás
+				$pdf->SetDrawColor(0, 0, 0); // Borda preta
+				$pdf->SetLineWidth(0.5);
+				$pdf->Rect($offsetX - 1, $offsetY - 1, $larguraImagem + 2, $alturaImagem + 2, 'D');
+
+				$pdf->Image($foto, $offsetX, $offsetY, $larguraImagem, $alturaImagem);
+			} catch (Exception $e) {
+				$pdf->SetXY($x, $y);
+				$pdf->Cell($larguras[5], $alturaLinha, 'Imagem não encontrada', 0, 0, 'C');
+			}
+
+			$pdf->Ln();
+		}
+
+		// Adicionar data de emissão do relatório
+		$pdf->Ln(10);
+		$pdf->SetFont('Arial', 'I', 10);
+		$pdf->SetTextColor(0); // Texto preto
+		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
+
+		ob_clean();
+		$pdf->Output('D', 'gerentes_' . date('dmY') . '.pdf');
+		ob_end_flush();
+	}
+
+
 ?>

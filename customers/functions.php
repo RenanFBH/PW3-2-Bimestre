@@ -151,64 +151,60 @@
 			$pdf->SetFont('Arial', '', 9);
 			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
 			
-			// Alternar cor de fundo para linhas
-			if($u['id'] % 2 == 0) {
-				$pdf->SetFillColor(229, 243, 255); // Azul claro
-			} else {
-				$pdf->SetFillColor(255, 255, 255); // Branco
-			}
-
-			// Altura da linha 3 vezes maior (30mm)
+			// Alternar cor de fundo entre branco e cinza claro
+			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
+		
 			$alturaLinha = 30;
-			
-			// Células de texto
+
 			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
-			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['name']), 1, 0, 'L', true);
-			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($u['cpf_cnpj']), 1, 0, 'C', true);
-			$pdf->Cell($larguras[3], $alturaLinha, $pdf->converteTexto($u['city']), 1, 0, 'L', true);
+			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['name']), 1, 0, 'C', true); // Alinhado ao centro
+
+			$formattedCPFCNPJ = format_cpf_cnpj($u['cpf_cnpj']);
+			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($formattedCPFCNPJ), 1, 0, 'C', true);
+			$pdf->Cell($larguras[3], $alturaLinha, $pdf->converteTexto($u['city']), 1, 0, 'C', true); // Alinhado ao centro
 			$pdf->Cell($larguras[4], $alturaLinha, $pdf->converteTexto($u['state']), 1, 0, 'C', true);
-			$pdf->Cell($larguras[5], $alturaLinha, $pdf->converteTexto($u['phone']), 1, 0, 'C', true);
-			
-			// Formatar data modificada
+
+			$formattedPhone = telefone($u['phone']);
+			$pdf->Cell($larguras[5], $alturaLinha, $formattedPhone, 1, 0, 'C', true);
+		
 			$modified = !empty($u['modified']) ? date('d/m/Y H:i', strtotime($u['modified'])) : '';
 			$pdf->Cell($larguras[6], $alturaLinha, $modified, 1, 0, 'C', true);
-
-			// Célula para a foto
+		
+			// Imagem com borda e efeito "rounded"
 			$x = $pdf->GetX();
 			$y = $pdf->GetY();
 			$pdf->Cell($larguras[7], $alturaLinha, '', 1, 0, 'C', true);
-
-			// Adicionar foto (se existir)
+		
 			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
 			$foto = "fotos/" . $nomeFoto;
-
-			// Ajustar tamanho da imagem proporcionalmente à altura da linha
-			$larguraImagem = 25; // Aumentei um pouco a largura
-			$alturaImagem = 25;  // Aumentei um pouco a altura
+		
+			$larguraImagem = 25;
+			$alturaImagem = 25;
 			$offsetX = $x + ($larguras[7] - $larguraImagem) / 2;
 			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
-
-			// Centralizar a imagem vertical e horizontalmente
+		
 			try {
+				// Simula borda com retângulo atrás
+				$pdf->SetDrawColor(0, 0, 0); // Borda preta
+				$pdf->SetLineWidth(0.5);
+				$pdf->Rect($offsetX - 1, $offsetY - 1, $larguraImagem + 2, $alturaImagem + 2, 'D');
+		
 				$pdf->Image($foto, $offsetX, $offsetY, $larguraImagem, $alturaImagem);
 			} catch (Exception $e) {
-				// Caso haja erro ao carregar a imagem, exibe texto
 				$pdf->SetXY($x, $y);
 				$pdf->Cell($larguras[7], $alturaLinha, 'Imagem não encontrada', 0, 0, 'C');
 			}
-
+		
 			$pdf->Ln();
 		}
-
 		// Adicionar data de emissão do relatório
 		$pdf->Ln(10);
 		$pdf->SetFont('Arial', 'I', 10);
+		$pdf->SetTextColor(0); // Texto preto
 		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
 
 		ob_clean();
-		$pdf->Output('D', 'clientes_' . date('Ymd_His') . '.pdf');
+		$pdf->Output('D', 'clientes_' . date('dmY') . '.pdf');
 		ob_end_flush();
 	}
-
-
 ?>

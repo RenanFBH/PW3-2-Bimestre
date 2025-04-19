@@ -53,10 +53,8 @@
 										<input type="password" name="usuario[password]" id="passwordInput" maxlength="50" required style="padding-right: 40px;">
 										<div class="underline"></div>
 										<label>Senha</label>
-
-										<!-- Ícones sobrepostos no canto direito -->
-										<i id="showPassword" class="fa-solid fa-eye" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer; display:none;"></i>
-										<i id="hidePassword" class="fa-solid fa-eye-slash" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer; display:none;"></i>
+										<i onclick="toggleSenha()" class="fa-solid fa-eye show" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer;"></i>
+										<i onclick="toggleSenha()" class="fa-solid fa-house hide" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer; display:none;"></i>
 									</div>
 								</div>
 							</div>						
@@ -76,8 +74,6 @@
 				const removeBtn = document.getElementById('removeBtn');
 				const imgPreview = document.getElementById('imgPreview');
 				const inputPassword = document.getElementById('passwordInput');
-				const inputShow = document.getElementById('showPassword');
-				const inputHide = document.getElementById('hidePassword');
 
 				uploadInput.addEventListener('change', function () {
 				const file = this.files[0];

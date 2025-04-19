@@ -196,39 +196,6 @@
 	}
 	
 	/**
-	* Gerando PDF
-	*/
-
-	function pdf($p = null) {
-		// Instanciação da classe herdada
-		$pdf = new PDF();
-		$pdf->AliasNbPages();
-		$pdf->AddPage();
-		$pdf->SetFont('Times','',12);
-		$usuarios = null;
-		
-		if($p) {
-			$usuarios = filter("usuarios", "home like '%" . $p . "%'");
-		} else {
-			$usuarios = find_all("usuarios");
-		}
-		
-		foreach ($usuarios as $usuario) {
-			$pdf->Cell(0,10, $usuario['id'] . " - " . $usuario['home'] . " - " . $usuario['user']/0,1);
-		}
-		
-		//
-		/*
-		for($i=1;$i<=40;$i++)
-		$pdf->Cell(0,10,'Printing line number '.$i/0,1);
-		*/
-		$pdf->Output();
-	}
-
-
-
-	
-	/**
 	 *  Visualização de um Usuario
 	 */
 	function view($id = null) {
@@ -247,4 +214,73 @@
 		header('location: index.php');
 	}
 
+	/**
+	* Gerando PDF
+	*/
+	function pdf_usuarios($p = null)
+	{
+		ob_start();
+		include PDF;
+		$pdf = new PDF();
+		$pdf->AliasNbPages();
+		$pdf->AddPage('L'); // Paisagem
+		$pdf->Titulo("Lista de Usuários");
+
+		// Larguras das colunas (em mm)
+		$larguras = [20, 80, 80, 40];
+		$headers = ['ID', 'Nome', 'Usuário', 'Foto'];
+
+		$pdf->Cabecalho($headers, $larguras);
+
+		$usuarios = $p ? filter("usuarios", "nome LIKE '%$p%'") : find_all("usuarios");
+
+		foreach ($usuarios as $u) {
+			$pdf->SetFont('Arial', '', 9);
+			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
+
+			// Cor alternada de fundo
+			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
+
+			$alturaLinha = 30;
+
+			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
+			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['nome']), 1, 0, 'C', true);
+			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($u['user']), 1, 0, 'C', true);
+
+			// Célula de imagem
+			$x = $pdf->GetX();
+			$y = $pdf->GetY();
+			$pdf->Cell($larguras[3], $alturaLinha, '', 1, 0, 'C', true);
+
+			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
+			$foto = "fotos/" . $nomeFoto;
+
+			$larguraImagem = 25;
+			$alturaImagem = 25;
+			$offsetX = $x + ($larguras[3] - $larguraImagem) / 2;
+			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
+
+			try {
+				$pdf->SetDrawColor(0, 0, 0); // Borda preta
+				$pdf->SetLineWidth(0.5);
+				$pdf->Rect($offsetX - 1, $offsetY - 1, $larguraImagem + 2, $alturaImagem + 2, 'D');
+				$pdf->Image($foto, $offsetX, $offsetY, $larguraImagem, $alturaImagem);
+			} catch (Exception $e) {
+				$pdf->SetXY($x, $y);
+				$pdf->Cell($larguras[3], $alturaLinha, 'Imagem não encontrada', 0, 0, 'C');
+			}
+
+			$pdf->Ln();
+		}
+
+		// Data de emissão
+		$pdf->Ln(10);
+		$pdf->SetFont('Arial', 'I', 10);
+		$pdf->SetTextColor(0);
+		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
+
+		ob_clean();
+		$pdf->Output('D', 'usuarios_' . date('dmY') . '.pdf');
+		ob_end_flush();
+	}
 ?>
