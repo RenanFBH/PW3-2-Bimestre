@@ -8,10 +8,12 @@
 		<meta charset="utf-8">
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta property="og:title" content="CRUD-PW2-2024" />
+		<meta property="og:title" content="CRUD-PW3-2025" />
 		<meta property="og:url" content="http://projetopw2024.great-site.net/" />
-		<meta property="og:image" content="<?php echo BASEURL; ?>/img/icone.ico" />
-		<link rel="icon" type="image/x-icon" href="<?php echo BASEURL; ?>/img/icone.ico">		
+		<meta property="og:image" content="<?php echo BASEURL; ?>css/logo.ico" />
+		<meta name="keywords" content="CRUD, PHP, Bootstrap, Sistema Web, MySQL, PW3 2025">
+		<meta name="author" content="Renan e Gustavo">
+		<link rel="icon" type="image/x-icon" href="<?php echo BASEURL; ?>css/logo.ico">		
 		<link rel="stylesheet" href="<?php echo BASEURL; ?>css/bootstrap/bootstrap.min.css">
 		<link rel="stylesheet" href="<?php echo BASEURL; ?>css/fontawesome/all.min.css">
 		<link rel="stylesheet" href="<?php echo BASEURL; ?>css/estilo.css">	
@@ -39,10 +41,6 @@
 								<i class="fa-solid fa-right-to-bracket"></i> Login
 							</a>
 <?php endif; ?>
-
-
-
-
 							<li class="nav-item margin-nav-link">
 								<div class="dropdown">
 									<a class="nav-link mx-lg-2 dropdown-toggle text" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -59,10 +57,6 @@
 									</ul>
 								</div>
 							</li>
-
-
-
-
 							<li class="nav-item">
 								<div class="dropdown">
 									<a class="nav-link mx-lg-2 dropdown-toggle text" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -97,12 +91,6 @@
 									</ul>
 								</div>
 							</li>
-
-
-
-
-
-
 							<li class="nav-item margin-nav logout-nav" style="display:none;">
 								<a class="nav-link mx-lg-2" href="<?php echo BASEURL; ?>inc/logout.php">
 									<i class="fa-solid fa-right-from-bracket"></i> 

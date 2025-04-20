@@ -159,6 +159,12 @@
 				const wrapper = document.querySelector('.upload-wrapper');
 
 				window.onload = () => {
+					if (imgPreview.src.includes("fotos/semimagem.jpg")) {
+						removeBtn.style.display = 'none';
+					} else {
+						removeBtn.style.display = 'inline-block';
+					}
+
 					inputTel.oninput();
 					inputCel.oninput();
 					inputCep.oninput();
@@ -356,6 +362,9 @@
 					inputCep.value = rawcep;
 					inputCpfCnpj.value = rawcpfcnpj;
 					inputIe.value = rawie;
+					if (!imgPreview.src.includes("fotos/semimagem.jpg")) {
+						removeBtn.style.display = 'inline-block';
+					}
 					return true;
 				}
 			</script>

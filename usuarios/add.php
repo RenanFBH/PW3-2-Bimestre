@@ -40,21 +40,19 @@
 							<div class="col-lg-12 align-items-center">
 								<div class="wrapper me-5 ms-5">
 									<div class="input-data" style="margin-top:10%; !important">
-										<input type="text" name="usuario[nome]" maxlength="50" required>
+										<input type="text" name="usuario[nome]" maxlength="30" required>
 										<div class="underline"></div>
 										<label>Nome / Razão Social</label>
 									</div>
 									<div class="input-data" style="margin-top:10%; !important">
-										<input  type="text" name="usuario[user]" maxlength="50" required>
+										<input  type="text" name="usuario[user]" maxlength="20" required>
 										<div class="underline"></div>
 										<label>Login</label>
 									</div>
 									<div class="input-data d-flex position-relative" style="margin-top:10%;">
-										<input type="password" name="usuario[password]" id="passwordInput" maxlength="50" required style="padding-right: 40px;">
+										<input type="password" name="usuario[password]" id="passwordInput" minlength="5" maxlength="20" required style="padding-right: 40px;">
 										<div class="underline"></div>
 										<label>Senha</label>
-										<i onclick="toggleSenha()" class="fa-solid fa-eye show" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer;"></i>
-										<i onclick="toggleSenha()" class="fa-solid fa-house hide" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer; display:none;"></i>
 									</div>
 								</div>
 							</div>						

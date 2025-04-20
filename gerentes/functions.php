@@ -137,7 +137,7 @@
 	{
 		ob_start();
 		include PDF;
-		$pdf = new PDF();
+		$pdf = new PDF('L', 'mm', 'A4');
 		$pdf->AliasNbPages();
 		$pdf->AddPage('L'); // Paisagem para caber mais colunas
 		$pdf->Titulo("Lista de Gerentes");
@@ -150,50 +150,104 @@
 
 		$gerentes = $p ? filter("gerentes", "name LIKE '%$p%'") : find_all("gerentes");
 
+		$alturaFixa = 30;
+
 		foreach ($gerentes as $u) {
-			$pdf->SetFont('Arial', '', 9);
-			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
-			
-			// Alternar cor de fundo entre branco e cinza claro
-			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
 
-			$alturaLinha = 30;
+			// Calcular altura necessária para o endereço
+			$endereco = $pdf->converteTexto($u['endereco']);
+			$nbLinhasEndereco = $pdf->NbLines($larguras[2], $endereco);
+			$alturaEndereco = $nbLinhasEndereco * 6;
 
-			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
-			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['nome']), 1, 0, 'C', true); // Alinhado ao centro
+			// Calcular altura necessária para o nome (caso queira aplicar MultiCell também depois)
+			$nome = $pdf->converteTexto($u['nome']);
+			$nbLinhasNome = $pdf->NbLines($larguras[1], $nome);
+			$alturaNome = $nbLinhasNome * 6;
 
-			$pdf->Cell($larguras[2], $alturaLinha, $pdf->converteTexto($u['endereco']), 1, 0, 'C', true);
-			$pdf->Cell($larguras[3], $alturaLinha, $pdf->converteTexto($u['depto']), 1, 0, 'C', true);
+			// Maior altura entre os dois ou alturaFixa
+			$alturaLinha = max($alturaEndereco, $alturaNome, $alturaFixa);
 
-			// Formatar data de nascimento
-			$formattedDate = !empty($u['datanasc']) ? date('d/m/Y', strtotime($u['datanasc'])) : '';
-			$pdf->Cell($larguras[4], $alturaLinha, $formattedDate, 1, 0, 'C', true);
-
-			// Imagem com borda e efeito "rounded"
-			$x = $pdf->GetX();
-			$y = $pdf->GetY();
-			$pdf->Cell($larguras[5], $alturaLinha, '', 1, 0, 'C', true);
-
-			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
-			$foto = "fotos/" . $nomeFoto;
-
-			$larguraImagem = 25;
-			$alturaImagem = 25;
-			$offsetX = $x + ($larguras[5] - $larguraImagem) / 2;
-			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
-
-			try {
-				// Simula borda com retângulo atrás
-				$pdf->SetDrawColor(0, 0, 0); // Borda preta
-				$pdf->SetLineWidth(0.5);
-				$pdf->Rect($offsetX - 1, $offsetY - 1, $larguraImagem + 2, $alturaImagem + 2, 'D');
-
-				$pdf->Image($foto, $offsetX, $offsetY, $larguraImagem, $alturaImagem);
-			} catch (Exception $e) {
-				$pdf->SetXY($x, $y);
-				$pdf->Cell($larguras[5], $alturaLinha, 'Imagem não encontrada', 0, 0, 'C');
+			// Verificar se há espaço na página atual
+			$margemInferior = 15; // ajusta conforme o rodapé
+			if ($pdf->GetY() + $alturaLinha > $pdf->GetPageHeight() - $margemInferior) {
+				$pdf->AddPage();
 			}
 
+			$pdf->SetFont('Arial', '', 9);
+			$pdf->SetX(($pdf->GetPageWidth() - array_sum($larguras)) / 2);
+		
+			// Alternar cor de fundo
+			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
+		
+			// Posição inicial da linha
+			$xInicio = $pdf->GetX();
+			$yInicio = $pdf->GetY();
+		
+			// ID
+			$pdf->Cell($larguras[0], $alturaFixa, $u['id'], 1, 0, 'C', true);
+		
+			// Nome
+			$xNome = $pdf->GetX();
+			$pdf->Rect($xNome, $yInicio, $larguras[1], $alturaFixa, 'DF');
+			$nome = $pdf->converteTexto($u['nome']);
+			$nbNome = $pdf->NbLines($larguras[1], $nome);
+			$alturaNome = 6 * $nbNome;
+			$offsetYNome = $yInicio + ($alturaFixa - $alturaNome) / 2;
+			$pdf->SetXY($xNome, $offsetYNome);
+			$pdf->MultiCell($larguras[1], 6, $nome, 0, 'C');
+			$pdf->SetXY($xNome + $larguras[1], $yInicio);
+		
+			// Endereço
+			$xEndereco = $pdf->GetX();
+			$pdf->Rect($xEndereco, $yInicio, $larguras[2], $alturaFixa, 'DF');
+			$endereco = $pdf->converteTexto($u['endereco']);
+			$nbEndereco = $pdf->NbLines($larguras[2], $endereco);
+			$alturaEnd = 6 * $nbEndereco;
+			$offsetYEnd = $yInicio + ($alturaFixa - $alturaEnd) / 2;
+			$pdf->SetXY($xEndereco, $offsetYEnd);
+			$pdf->MultiCell($larguras[2], 6, $endereco, 0, 'C');
+			$pdf->SetXY($xEndereco + $larguras[2], $yInicio);
+		
+			// Departamento
+			$xDepto = $pdf->GetX();
+			$pdf->Rect($xDepto, $yInicio, $larguras[3], $alturaFixa, 'DF');
+			$depto = $pdf->converteTexto($u['depto']);
+			$nbDepto = $pdf->NbLines($larguras[3], $depto);
+			$alturaDepto = 6 * $nbDepto;
+			$offsetYDepto = $yInicio + ($alturaFixa - $alturaDepto) / 2;
+			$pdf->SetXY($xDepto, $offsetYDepto);
+			$pdf->MultiCell($larguras[3], 6, $depto, 0, 'C');
+			$pdf->SetXY($xDepto + $larguras[3], $yInicio);
+		
+			// Data Nasc.
+			$xData = $pdf->GetX();
+			$pdf->Rect($xData, $yInicio, $larguras[4], $alturaFixa, 'DF');
+			$dataNasc = !empty($u['datanasc']) ? date('d/m/Y', strtotime($u['datanasc'])) : '';
+			$offsetYData = $yInicio + ($alturaFixa - 6) / 2;
+			$pdf->SetXY($xData, $offsetYData);
+			$pdf->Cell($larguras[4], 6, $dataNasc, 0, 0, 'C');
+			$pdf->SetXY($xData + $larguras[4], $yInicio);
+		
+			// Foto
+			$xFoto = $pdf->GetX();
+			$yFoto = $pdf->GetY();
+			$pdf->Cell($larguras[5], $alturaFixa, '', 1, 0, 'C', true);
+			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
+			$foto = "fotos/" . $nomeFoto;
+			$larguraImagem = 25;
+			$alturaImagem = 25;
+			$offsetXImg = $xFoto + ($larguras[5] - $larguraImagem) / 2;
+			$offsetYImg = $yFoto + ($alturaFixa - $alturaImagem) / 2;
+			try {
+				$pdf->SetDrawColor(0, 0, 0);
+				$pdf->SetLineWidth(0.5);
+				$pdf->Rect($offsetXImg - 1, $offsetYImg - 1, $larguraImagem + 2, $alturaImagem + 2, 'D');
+				$pdf->Image($foto, $offsetXImg, $offsetYImg, $larguraImagem, $alturaImagem);
+			} catch (Exception $e) {
+				$pdf->SetXY($xFoto, $yFoto);
+				$pdf->Cell($larguras[5], $alturaFixa, 'Erro na imagem', 0, 0, 'C');
+			}
+		
 			$pdf->Ln();
 		}
 
