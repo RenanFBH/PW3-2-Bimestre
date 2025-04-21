@@ -301,6 +301,9 @@ main {
     position:relative;
     overflow:hidden;
 }
+.input-box-2 {
+	height:50vh !important;
+}
 .uploadlabel {
     cursor:pointer;
     display:flex;

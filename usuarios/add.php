@@ -25,7 +25,7 @@
 					<form action="add.php" method="post" enctype="multipart/form-data" class="row">
 						<div class="col-lg-6">
 							<div class="box">
-								<div class="input-box" id="uploadArea">
+								<div class="input-box input-box-2" id="uploadArea">
 									<h2 class="upload-area-title">Imagem do Usuário</h2>
 									<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
 									<label for="upload" class="uploadlabel" id="uploadLabel">

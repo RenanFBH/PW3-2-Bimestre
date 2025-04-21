@@ -61,9 +61,15 @@
 						@unlink("fotos/" . $foto_antiga);
 					}
 					$gerente['foto'] = upload_foto($_FILES["foto"]);
+				} elseif (!empty($_POST['remove_foto']) && $_POST['remove_foto'] == '1') {
+					$foto_antiga = find('gerentes', $id)['foto'];
+					if ($foto_antiga && $foto_antiga != "semimagem.jpg") {
+						@unlink("fotos/" . $foto_antiga);
+					}
+					$gerente['foto'] = "semimagem.jpg";
 				} else {
 					$gerente['foto'] = find('gerentes', $id)['foto'];
-				}
+				}	
 
 				update('gerentes', $id, $gerente);
 				clear_messages();

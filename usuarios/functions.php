@@ -122,10 +122,10 @@
 		try {
 			if (isset($_GET['id'])) {
 				$id = $_GET['id'];
-
+	
 				if (isset($_POST['usuario'])) {
 					$usuario = $_POST['usuario'];
-
+	
 					// Mantém a senha existente caso o campo esteja vazio
 					if (empty($usuario['password'])) {
 						$existingUsuario = find('usuarios', $id); // Busca o usuário atual no banco
@@ -135,58 +135,61 @@
 						$senha = criptografia($usuario['password']);
 						$usuario['password'] = $senha;
 					}
-
-					// Processamento do upload de foto, caso haja uma nova
-					if (!empty($_FILES["foto"]["name"])) {
+	
+					// Verifica se o campo remove_foto foi ativado
+					if (isset($_POST['remove_foto']) && $_POST['remove_foto'] == '1') {
+						$existingUsuario = find('usuarios', $id);
+						if ($existingUsuario['foto'] !== 'semimagem.jpg') {
+							unlink("fotos/" . $existingUsuario['foto']); // Apaga a imagem antiga
+						}
+						$usuario['foto'] = 'semimagem.jpg'; // Define a imagem padrão
+					}
+	
+					// Processamento do upload de nova foto, se não for remoção
+					elseif (!empty($_FILES["foto"]["name"])) {
 						$pasta_destino = "fotos/";
 						$arquivo_destino = $pasta_destino . basename($_FILES["foto"]["name"]);
 						$nomearquivo = basename($_FILES["foto"]["name"]);
 						$nome_temp = $_FILES["foto"]["tmp_name"];
 						$tipo_arquivo = strtolower(pathinfo($arquivo_destino, PATHINFO_EXTENSION));
 						$tamanho_arquivo = $_FILES["foto"]["size"];
-
+	
 						// Verifica se a imagem enviada já existe
 						if (file_exists($arquivo_destino)) {
-							// Se a imagem antiga não for padrão, exclua-a
 							$existingUsuario = find('usuarios', $id);
 							if ($existingUsuario['foto'] !== "semimagem.jpg" && $existingUsuario['foto'] !== $nomearquivo) {
 								unlink($pasta_destino . $existingUsuario['foto']);
 							}
-							// Atualiza o nome da imagem no banco de dados
 							$usuario['foto'] = $nomearquivo;
 						} else {
-							// Faz o upload da nova imagem
 							upload($pasta_destino, $arquivo_destino, $tipo_arquivo, $nome_temp, $tamanho_arquivo);
-
-							// Se o upload foi bem-sucedido, atualiza o nome da imagem
+	
 							if ($_SESSION['type'] == "success") {
 								$existingUsuario = find('usuarios', $id);
 								if ($existingUsuario['foto'] !== "semimagem.jpg") {
-									unlink($pasta_destino . $existingUsuario['foto']); // Remove a imagem antiga
+									unlink($pasta_destino . $existingUsuario['foto']);
 								}
 								$usuario['foto'] = $nomearquivo;
 							} else {
-								unset($usuario['foto']); // Mantém a foto antiga em caso de falha
+								unset($usuario['foto']); // Mantém a foto antiga em caso de falha no upload
 							}
 						}
 					} else {
-						// Mantém a foto existente caso nenhuma nova foto tenha sido enviada
+						// Nenhuma nova foto enviada e não marcou remoção, então mantém a atual
 						$existingUsuario = find('usuarios', $id);
 						$usuario['foto'] = $existingUsuario['foto'];
 					}
-
+	
 					// Atualiza as informações no banco de dados
 					update('usuarios', $id, $usuario);
 					clear_messages();
-					// Redireciona para a página inicial após a atualização
 					header('location: index.php');
 				} else {
-					// Caso o formulário não tenha sido enviado, carrega as informações do usuário para o formulário
+					// Carrega os dados para o formulário caso não tenha sido enviado
 					global $usuario;
 					$usuario = find('usuarios', $id);
 				}
 			} else {
-				// Se não encontrar o ID, redireciona para a página inicial
 				header('location: index.php');
 			}
 		} catch (Exception $e) {
@@ -194,6 +197,7 @@
 			$_SESSION['type'] = "danger";
 		}
 	}
+	
 	
 	/**
 	 *  Visualização de um Usuario

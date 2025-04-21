@@ -20,7 +20,7 @@
 ?>
             <div class="container">
 				<div class="card rounded-4">
-					<h2 class="text-center">Cadastrar Gerente</h2>
+					<h2 class="text-center">Editar Gerente <?php echo $gerente["id"]; ?></h2>
 					<hr>
 					<form action="edit.php?id=<?php echo $gerente['id']; ?>" method="post" enctype="multipart/form-data" class="row">
                         <div class="col-lg-4">
@@ -29,6 +29,7 @@
 									<h2 class="upload-area-title">Imagem do Gerente</h2>
 									<div class="upload-wrapper" style="position:relative; width:100%; max-width:100%; height:90%;">
 										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
+										<input type="hidden" name="remove_foto" id="remove_foto" value="0">
 										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:90%;">
 											<span><i class="fa fa-cloud-upload"></i></span>
 											<p>Clique para fazer Upload</p>
@@ -105,12 +106,6 @@
 					} else {
 						removeBtn.style.display = 'inline-block';
 					}
-
-					inputTel.oninput();
-					inputCel.oninput();
-					inputCep.oninput();
-					inputCpfCnpj.oninput();
-					inputIe.oninput();
 				};
           
                 wrapper.addEventListener('mouseover', () => {
@@ -140,6 +135,7 @@
 					imgPreview.style.display = 'block';
 					imgPreview.src = "fotos/semimagem.jpg";
 					removeBtn.style.display = 'none'; 
+					document.getElementById('remove_foto').value = '1';
 				});
 			</script>
 <?php include(FOOTER_TEMPLATE); ?>

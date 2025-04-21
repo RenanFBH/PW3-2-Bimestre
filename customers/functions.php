@@ -55,9 +55,6 @@
 			if (isset($_POST['customer'])) {
 				$customer = $_POST['customer'];
 				$customer['modified'] = $now->format("Y-m-d H:i:s");
-				var_dump($_FILES); // <--- ADICIONE ISTO AQUI
-				die();     
-
 				
 				if (!empty($_FILES["foto"]["name"])) {
 					$foto_antiga = find('customers', $id)['foto'];
@@ -65,9 +62,15 @@
 						@unlink("fotos/" . $foto_antiga);
 					}
 					$customer['foto'] = upload_foto($_FILES["foto"]);
+				} elseif (!empty($_POST['remove_foto']) && $_POST['remove_foto'] == '1') {
+					$foto_antiga = find('customers', $id)['foto'];
+					if ($foto_antiga && $foto_antiga != "semimagem.jpg") {
+						@unlink("fotos/" . $foto_antiga);
+					}
+					$customer['foto'] = "semimagem.jpg";
 				} else {
 					$customer['foto'] = find('customers', $id)['foto'];
-				}
+				}				
 
 				update('customers', $id, $customer);
 				clear_messages();
