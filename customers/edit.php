@@ -19,7 +19,7 @@
     include(HEADER_TEMPLATE); 
 ?>
 			<div class="container">
-				<div class="card rounded-4">
+				<div class="card rounded-4 margin-2">
 					<h2 class="text-center">Editar Cliente <?php echo $customer["id"]; ?></h2>
 					<hr>
 					<form action="edit.php?id=<?php echo $customer['id']; ?>" onsubmit="return validar()" method="post" enctype="multipart/form-data" class="row">
@@ -30,7 +30,7 @@
 									<div class="upload-wrapper" style="position:relative; width:100%; height:100%;">
 										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
 										<input type="hidden" name="remove_foto" id="remove_foto" value="0">
-										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:90%;">
+										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
 											<span><i class="fa fa-cloud-upload"></i></span>
 											<p>Clique para fazer Upload</p>
 										</label>

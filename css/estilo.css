@@ -294,7 +294,7 @@ main {
 }
 .input-box {
     width:100%;
-    height:40vh;
+    height:100%;
     border-radius:10px;
     text-align:center;
     padding:20px;
@@ -302,7 +302,7 @@ main {
     overflow:hidden;
 }
 .input-box-2 {
-	height:50vh !important;
+	height:100%;
 }
 .uploadlabel {
     cursor:pointer;
@@ -334,12 +334,16 @@ main {
 }
 .foto-view {
 	width:100%;
+	height:60%;
 }
 .offcanvas-title {
 	color:#320679;
 }
 .offcanvas-body {
 	background-color:#e6f2ff;
+}
+.margin-2 {
+	margin-bottom:5%;
 }
 
 /*--------------------IDs--------------------*/
@@ -574,7 +578,7 @@ main {
 		max-width:100%;
 	}
 	.input-box {
-		height:30vh;
+		height:100%;
 	}
 	.uploadlabel {
 		height:90%;
@@ -625,7 +629,7 @@ main {
 		max-width:100%;
 	}
 	.input-box {
-		height:60vh;
+		height:100%;
 	}
 	.wrapper .input-data {
 		margin-top:3%;
@@ -659,10 +663,6 @@ main {
 		justify-content:center; 
 		margin-bottom:25%;
 	}
-	.foto-view {
-		width:100%;
-		height:170%;
-	}
 	#img-border-view {
 		width:60%;
 	}
@@ -678,7 +678,10 @@ main {
         flex-direction: column;
         align-items: center;
     }
-
+	.foto-view {
+		width:100%;
+		height:100%;
+	}
     .navbar-nav {
         width: 100%;
     }
@@ -722,7 +725,7 @@ main {
 		margin-left:5%;
 	}
 	.input-box {
-		height:40vh;
+		height:100%;
 	}
 	.margin-input-mobile {
 		margin-top:10% !important;

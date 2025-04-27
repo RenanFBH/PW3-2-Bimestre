@@ -19,12 +19,12 @@
     include(HEADER_TEMPLATE); 
 ?>
 			<div class="container">
-				<div class="card rounded-4">
+				<div class="card rounded-4 margin-2">
 					<h2 class="text-center">Visualizar Gerente <?php echo $gerente['id']; ?></h2>
 					<hr>
 					<div class="row">
 						<div class="col-lg-4">
-							<img src="fotos/<?php echo $gerente['foto']; ?>" class="img-fluid rounded-4 mb-3" id="img-border" alt="foto do cliente" style="width:100%; height:400px;"/>
+							<img src="fotos/<?php echo $gerente['foto']; ?>" class="img-fluid rounded-4 mb-3" id="img-border" alt="foto do cliente"/>
 						</div>
 						<div class="col-lg-8 row mobile-register">
 							

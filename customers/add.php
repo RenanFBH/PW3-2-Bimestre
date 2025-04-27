@@ -171,61 +171,74 @@
 					removeBtn.style.display = 'none'; 
 				});
 
-				inputTel.oninput = function () {
-					// Remove letras e caracteres especiais (exceto ponto)
-					var removeChar = this.value.replace(/[^0-9\.]/g, '');
+				inputTel.oninput = function (e) {
+					let cursorPosition = this.selectionStart;
+					
+					// Remove tudo que não for número
+					var formatedNumber = this.value.replace(/\D/g, '');
 
-					// Remove os pontos
-					var removeDot = removeChar.replace(/\./g, '');
-
-					// Remove qualquer caractere que não seja número
-					var formatedNumber = removeDot.replace(/\D/g, '');
+					// Limita o número de dígitos a 11
+					if (formatedNumber.length > 11) {
+						formatedNumber = formatedNumber.substring(0, 11);
+					}
 
 					// Aplica a máscara: (XX) XXXXX-XXXX
 					if (formatedNumber.length === 0) {
 						this.value = '';
-					} else if (formatedNumber.length === 1) {
+					} else if (formatedNumber.length <= 2) {
 						this.value = '(' + formatedNumber;
-					} else if (formatedNumber.length === 2) {
-						this.value = '(' + formatedNumber + ') ';
 					} else if (formatedNumber.length <= 6) {
-						// Do 3º ao 6º dígito (até completar 5 fora dos parênteses)
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' + formatedNumber.substring(2);
-					} else {
-						// Quando tiver 6 ou mais dígitos após os dois primeiros
+					} else if (formatedNumber.length <= 10) {
+						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
+									formatedNumber.substring(2, 7) + '-' +
+									formatedNumber.substring(7);
+					} else { // exatamente 11 dígitos
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
 									formatedNumber.substring(2, 7) + '-' +
 									formatedNumber.substring(7, 11);
 					}
+
+					// Ajusta a posição do cursor se for backspace
+					if (e.inputType === 'deleteContentBackward') {
+						this.setSelectionRange(cursorPosition, cursorPosition);
+					}
 				};
 
-				inputCel.oninput = function () {
-					// Remove letras e caracteres especiais (exceto ponto)
-					var removeChar = this.value.replace(/[^0-9\.]/g, '');
+				inputCel.oninput = function (e) {
+					let cursorPosition = this.selectionStart;
+					
+					// Remove tudo que não for número
+					var formatedNumber = this.value.replace(/\D/g, '');
 
-					// Remove os pontos
-					var removeDot = removeChar.replace(/\./g, '');
-
-					// Remove qualquer caractere que não seja número
-					var formatedNumber = removeDot.replace(/\D/g, '');
+					// Limita o número de dígitos a 11
+					if (formatedNumber.length > 11) {
+						formatedNumber = formatedNumber.substring(0, 11);
+					}
 
 					// Aplica a máscara: (XX) XXXXX-XXXX
 					if (formatedNumber.length === 0) {
 						this.value = '';
-					} else if (formatedNumber.length === 1) {
+					} else if (formatedNumber.length <= 2) {
 						this.value = '(' + formatedNumber;
-					} else if (formatedNumber.length === 2) {
-						this.value = '(' + formatedNumber + ') ';
 					} else if (formatedNumber.length <= 6) {
-						// Do 3º ao 6º dígito (até completar 5 fora dos parênteses)
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' + formatedNumber.substring(2);
-					} else {
-						// Quando tiver 6 ou mais dígitos após os dois primeiros
+					} else if (formatedNumber.length <= 10) {
+						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
+									formatedNumber.substring(2, 7) + '-' +
+									formatedNumber.substring(7);
+					} else { // exatamente 11 dígitos
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
 									formatedNumber.substring(2, 7) + '-' +
 									formatedNumber.substring(7, 11);
 					}
+
+					// Ajusta a posição do cursor se for backspace
+					if (e.inputType === 'deleteContentBackward') {
+						this.setSelectionRange(cursorPosition, cursorPosition);
+					}
 				};
+
 
 				inputCep.oninput = function () {
 					// Remove qualquer caractere que não seja número
