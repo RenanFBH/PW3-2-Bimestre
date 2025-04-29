@@ -21,12 +21,15 @@
 							<div class="box">
 								<div class="input-box" id="uploadArea">
 									<h2 class="upload-area-title">Imagem do Gerente</h2>
-									<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
-									<label for="upload" class="uploadlabel" id="uploadLabel">
-										<span><i class="fa fa-cloud-upload"></i></span>
-										<p>Clique para fazer Upload</p>
-									</label>
-									<img id="imgPreview" style="display:none; width: 100%; margin-top: 10px;" />
+									<div class="upload-wrapper" style="position:relative; width:100%; height:100%;">
+										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
+										<input type="hidden" name="remove_foto" id="remove_foto" value="0">
+										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
+											<span><i class="fa fa-cloud-upload"></i></span>
+											<p>Clique para fazer Upload</p>
+										</label>
+										<img id="imgPreview" src="fotos/semimagem.jpg" style="display: block; width: 100%; margin-top: 10px;" />									
+									</div>
 								</div>
 							</div>
 						</div>
@@ -89,27 +92,45 @@
 				const uploadLabel = document.getElementById('uploadLabel');
 				const removeBtn = document.getElementById('removeBtn');
 				const imgPreview = document.getElementById('imgPreview');
+				const inputUpload = document.getElementById('uploadLabel');
+				const wrapper = document.querySelector('.upload-wrapper');
+
+				window.onload = () => {
+					if (imgPreview.src.includes("fotos/semimagem.jpg")) {
+						removeBtn.style.display = 'none';
+					} else {
+						removeBtn.style.display = 'inline-block';
+					}
+				};
+          
+                wrapper.addEventListener('mouseover', () => {
+					inputUpload.style.display = 'flex';
+				});
+
+				wrapper.addEventListener('mouseout', () => {
+					inputUpload.style.display = 'none';
+				});
 
 				uploadInput.addEventListener('change', function () {
-				const file = this.files[0];
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = function (e) {
-					uploadLabel.style.display = 'none';
-					imgPreview.src = e.target.result;
-					imgPreview.style.display = 'block';
-					removeBtn.style.display = 'inline-block'; 
+					const file = this.files[0];
+					if (file) {
+							const reader = new FileReader();
+							reader.onload = function (e) {
+							uploadLabel.style.display = 'none';
+							imgPreview.src = e.target.result;
+							imgPreview.style.display = 'block';
+							removeBtn.style.display = 'inline-block'; 
+						}
+						reader.readAsDataURL(file);
 					}
-					reader.readAsDataURL(file);
-				}
 				});
 
 				removeBtn.addEventListener('click', function () {
 					uploadInput.value = ''; 
-					imgPreview.style.display = 'none';
-					imgPreview.src = '';
-					uploadLabel.style.display = 'flex'; 
+					imgPreview.style.display = 'block';
+					imgPreview.src = "fotos/semimagem.jpg";
 					removeBtn.style.display = 'none'; 
+					document.getElementById('remove_foto').value = '1';
 				});
 			</script>
 <?php include(FOOTER_TEMPLATE); ?>

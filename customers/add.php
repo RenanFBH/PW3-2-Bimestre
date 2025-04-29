@@ -21,12 +21,15 @@
 							<div class="box">
 								<div class="input-box" id="uploadArea">
 									<h2 class="upload-area-title">Imagem do Cliente</h2>
-									<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
-									<label for="upload" class="uploadlabel" id="uploadLabel">
-										<span><i class="fa fa-cloud-upload"></i></span>
-										<p>Clique para fazer Upload</p>
-									</label>
-									<img id="imgPreview" style="display:none; width: 100%; margin-top: 10px;" />
+									<div class="upload-wrapper" style="position:relative; width:100%; height:100%;">
+										<input type="file" id="upload" name="foto" accept=".png, .jpg, .jpeg, .gif" hidden>
+										<input type="hidden" name="remove_foto" id="remove_foto" value="0">
+										<label for="upload" class="uploadlabel" id="uploadLabel"style="display:none; position:absolute; top:0; left:0; width:100%; height:100%;">
+											<span><i class="fa fa-cloud-upload"></i></span>
+											<p>Clique para fazer Upload</p>
+										</label>
+										<img id="imgPreview" src="fotos/semimagem.jpg" style="display: block; width: 100%; margin-top: 10px;" />									
+									</div>
 								</div>
 							</div>
 						</div>
@@ -68,7 +71,7 @@
 										<label>CEP</label>
 									</div>
 									<div class="input-data">
-										<input type="text" name="customer[city]" maxlength="50" required>
+										<input id="inputMunicipio" type="text" name="customer[city]" maxlength="50" required>
 										<div class="underline"></div>
 										<label>Município</label>
 									</div>
@@ -140,105 +143,115 @@
 			<script>
 				const uploadInput = document.getElementById('upload');
 				const uploadLabel = document.getElementById('uploadLabel');
-				const imgPreview = document.getElementById('imgPreview');
 				const removeBtn = document.getElementById('removeBtn');
 				const inputTel = document.getElementById('inputTel');
 				const inputCel = document.getElementById('inputCel');
 				const inputCep = document.getElementById('inputCep');
 				const inputCpfCnpj = document.getElementById('inputCpfCnpj');
 				const inputIe = document.getElementById('inputIe');
+				const imgPreview = document.getElementById('imgPreview');
+				const inputUpload = document.getElementById('uploadLabel');
+				const wrapper = document.querySelector('.upload-wrapper');
 
+				window.onload = () => {
+					if (imgPreview.src.includes("fotos/semimagem.jpg")) {
+						removeBtn.style.display = 'none';
+					} else {
+						removeBtn.style.display = 'inline-block';
+					}
+
+					inputTel.oninput();
+					inputCel.oninput();
+					inputCep.oninput();
+					inputCpfCnpj.oninput();
+					inputIe.oninput();
+				};
+
+				wrapper.addEventListener('mouseover', () => {
+					inputUpload.style.display = 'flex';
+				});
+
+				wrapper.addEventListener('mouseout', () => {
+					inputUpload.style.display = 'none';
+				});
 
 				uploadInput.addEventListener('change', function () {
-				const file = this.files[0];
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = function (e) {
-					uploadLabel.style.display = 'none';
-					imgPreview.src = e.target.result;
-					imgPreview.style.display = 'block';
-					removeBtn.style.display = 'inline-block'; 
+					const file = this.files[0];
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function (e) {
+						uploadLabel.style.display = 'none';
+						imgPreview.src = e.target.result;
+						imgPreview.style.display = 'block';
+						removeBtn.style.display = 'inline-block'; 
+						}
+						reader.readAsDataURL(file);
 					}
-					reader.readAsDataURL(file);
-				}
 				});
 
 				removeBtn.addEventListener('click', function () {
 					uploadInput.value = ''; 
-					imgPreview.style.display = 'none';
-					imgPreview.src = '';
-					uploadLabel.style.display = 'flex'; 
+					imgPreview.style.display = 'block';
+					imgPreview.src = "fotos/semimagem.jpg";
 					removeBtn.style.display = 'none'; 
+					document.getElementById('remove_foto').value = '1';
 				});
 
-				inputTel.oninput = function (e) {
-					let cursorPosition = this.selectionStart;
-					
-					// Remove tudo que não for número
-					var formatedNumber = this.value.replace(/\D/g, '');
+				inputTel.oninput = function () {
+					// Remove letras e caracteres especiais (exceto ponto)
+					var removeChar = this.value.replace(/[^0-9\.]/g, '');
 
-					// Limita o número de dígitos a 11
-					if (formatedNumber.length > 11) {
-						formatedNumber = formatedNumber.substring(0, 11);
-					}
+					// Remove os pontos
+					var removeDot = removeChar.replace(/\./g, '');
 
-					// Aplica a máscara: (XX) XXXXX-XXXX
-					if (formatedNumber.length === 0) {
-						this.value = '';
-					} else if (formatedNumber.length <= 2) {
-						this.value = '(' + formatedNumber;
-					} else if (formatedNumber.length <= 6) {
-						this.value = '(' + formatedNumber.substring(0, 2) + ') ' + formatedNumber.substring(2);
-					} else if (formatedNumber.length <= 10) {
-						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
-									formatedNumber.substring(2, 7) + '-' +
-									formatedNumber.substring(7);
-					} else { // exatamente 11 dígitos
-						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
-									formatedNumber.substring(2, 7) + '-' +
-									formatedNumber.substring(7, 11);
-					}
-
-					// Ajusta a posição do cursor se for backspace
-					if (e.inputType === 'deleteContentBackward') {
-						this.setSelectionRange(cursorPosition, cursorPosition);
-					}
-				};
-
-				inputCel.oninput = function (e) {
-					let cursorPosition = this.selectionStart;
-					
-					// Remove tudo que não for número
-					var formatedNumber = this.value.replace(/\D/g, '');
-
-					// Limita o número de dígitos a 11
-					if (formatedNumber.length > 11) {
-						formatedNumber = formatedNumber.substring(0, 11);
-					}
+					// Remove qualquer caractere que não seja número
+					var formatedNumber = removeDot.replace(/\D/g, '');
 
 					// Aplica a máscara: (XX) XXXXX-XXXX
 					if (formatedNumber.length === 0) {
 						this.value = '';
-					} else if (formatedNumber.length <= 2) {
+					} else if (formatedNumber.length === 1) {
 						this.value = '(' + formatedNumber;
+					} else if (formatedNumber.length === 2) {
+						this.value = '(' + formatedNumber + ') ';
 					} else if (formatedNumber.length <= 6) {
+						// Do 3º ao 6º dígito (até completar 5 fora dos parênteses)
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' + formatedNumber.substring(2);
-					} else if (formatedNumber.length <= 10) {
-						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
-									formatedNumber.substring(2, 7) + '-' +
-									formatedNumber.substring(7);
-					} else { // exatamente 11 dígitos
+					} else {
+						// Quando tiver 6 ou mais dígitos após os dois primeiros
 						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
 									formatedNumber.substring(2, 7) + '-' +
 									formatedNumber.substring(7, 11);
 					}
-
-					// Ajusta a posição do cursor se for backspace
-					if (e.inputType === 'deleteContentBackward') {
-						this.setSelectionRange(cursorPosition, cursorPosition);
-					}
 				};
 
+				inputCel.oninput = function () {
+					// Remove letras e caracteres especiais (exceto ponto)
+					var removeChar = this.value.replace(/[^0-9\.]/g, '');
+
+					// Remove os pontos
+					var removeDot = removeChar.replace(/\./g, '');
+
+					// Remove qualquer caractere que não seja número
+					var formatedNumber = removeDot.replace(/\D/g, '');
+
+					// Aplica a máscara: (XX) XXXXX-XXXX
+					if (formatedNumber.length === 0) {
+						this.value = '';
+					} else if (formatedNumber.length === 1) {
+						this.value = '(' + formatedNumber;
+					} else if (formatedNumber.length === 2) {
+						this.value = '(' + formatedNumber + ') ';
+					} else if (formatedNumber.length <= 6) {
+						// Do 3º ao 6º dígito (até completar 5 fora dos parênteses)
+						this.value = '(' + formatedNumber.substring(0, 2) + ') ' + formatedNumber.substring(2);
+					} else {
+						// Quando tiver 6 ou mais dígitos após os dois primeiros
+						this.value = '(' + formatedNumber.substring(0, 2) + ') ' +
+									formatedNumber.substring(2, 7) + '-' +
+									formatedNumber.substring(7, 11);
+					}
+				};
 
 				inputCep.oninput = function () {
 					// Remove qualquer caractere que não seja número
@@ -345,7 +358,41 @@
 					inputCep.value = rawcep;
 					inputCpfCnpj.value = rawcpfcnpj;
 					inputIe.value = rawie;
+					if (!imgPreview.src.includes("fotos/semimagem.jpg")) {
+						removeBtn.style.display = 'inline-block';
+					}
 					return true;
 				}
+
+				// Função para consultar o CEP
+				function consultarCep() {
+					const cep = inputCep.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+
+					// Verifica se o CEP tem 8 dígitos
+					if (cep.length === 8) {
+						const url = `https://viacep.com.br/ws/${cep}/json/`;
+
+						// Faz a requisição para o ViaCEP
+						fetch(url)
+							.then(response => response.json())
+							.then(data => {
+								if (!data.erro) {
+									// Preenche os campos com os dados recebidos, caso existam
+									document.querySelector('input[name="customer[hood]"]').value = data.bairro || '';  // Bairro
+									document.getElementById('inputCep').value = cep;  // CEP (já com máscara aplicada)
+									document.getElementById('inputMunicipio').value = data.localidade || '';  // Município
+									document.querySelector('select[name="customer[state]"]').value = data.uf || '';  // UF (Estado)
+									document.querySelector('input[name="customer[address]"]').value = data.logradouro || '';  // Endereço
+									document.querySelector('input[name="customer[address]"]:nth-of-type(2)').value = '';  // Endereço adicional (deixe vazio ou personalize conforme necessário)
+								}
+							})
+							.catch(error => {
+								// Em caso de erro, não faz nada
+							});
+					}
+				}
+				// Adiciona o evento para chamar a função ao digitar o CEP
+				inputCep.addEventListener('input', consultarCep);
+
 			</script>
 <?php include(FOOTER_TEMPLATE); ?>

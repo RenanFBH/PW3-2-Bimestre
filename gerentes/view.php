@@ -63,7 +63,7 @@
 						</div>
 						<hr>
 						<div class="col-lg-12 button-align">
-							<a href="edit.php?id=<?php echo $customer['id']; ?>" class="btn btn-custom-2 w-25 h-100"><i class="fa-solid fa-pen-to-square me-1"></i> Editar</a>
+							<a href="edit.php?id=<?php echo $gerente['id']; ?>" class="btn btn-custom-2 w-25 h-100"><i class="fa-solid fa-pen-to-square me-1"></i> Editar</a>
 							<a href="index.php" class="btn btn-custom-2 w-25 h-100"><i class="fa-solid fa-circle-left"></i> Voltar</a>
 						</div>
 					</form>

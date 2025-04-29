@@ -182,17 +182,17 @@
 				});
 
 				uploadInput.addEventListener('change', function () {
-				const file = this.files[0];
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = function (e) {
-					uploadLabel.style.display = 'none';
-					imgPreview.src = e.target.result;
-					imgPreview.style.display = 'block';
-					removeBtn.style.display = 'inline-block'; 
+					const file = this.files[0];
+					if (file) {
+						const reader = new FileReader();
+						reader.onload = function (e) {
+						uploadLabel.style.display = 'none';
+						imgPreview.src = e.target.result;
+						imgPreview.style.display = 'block';
+						removeBtn.style.display = 'inline-block'; 
+						}
+						reader.readAsDataURL(file);
 					}
-					reader.readAsDataURL(file);
-				}
 				});
 
 				removeBtn.addEventListener('click', function () {

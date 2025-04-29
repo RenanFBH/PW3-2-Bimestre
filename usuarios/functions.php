@@ -223,6 +223,7 @@
 	*/
 	function pdf_usuarios($p = null)
 	{
+		date_default_timezone_set('America/Sao_Paulo'); 
 		ob_start();
 		include PDF;
 		$pdf = new PDF();
