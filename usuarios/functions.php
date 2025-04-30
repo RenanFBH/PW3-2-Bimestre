@@ -180,6 +180,10 @@
 						$usuario['foto'] = $existingUsuario['foto'];
 					}
 	
+					if ($usuario['user'] == "admin" and !empty($usuario['foto'])) {
+						$_SESSION['foto'] = $usuario['foto']; 
+					}
+
 					// Atualiza as informações no banco de dados
 					update('usuarios', $id, $usuario);
 					clear_messages();
