@@ -25,13 +25,6 @@
 	}		
 	index();
 	include(HEADER_TEMPLATE);
-	if (isset($_GET['pdf'])) {
-		if ($_GET['pdf'] == "ok") {
-			pdf_gerentes();
-		} else {
-			pdf_gerentes($_GET['pdf']);
-		}
-	}
 	ob_end_flush();
 ?>
 			<div class="container-lg position-relative z-1 header-index rounded border">
