@@ -13,7 +13,7 @@
 	include(HEADER_TEMPLATE);
 ?>
 			<div class="container">
-				<div class="card rounded-4">
+				<div class="card rounded-4 margin-2">
 					<h2 class="text-center">Cadastrar Gerente</h2>
 					<hr>
 					<form action="add.php" method="post" enctype="multipart/form-data" class="row">
