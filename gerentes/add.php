@@ -56,7 +56,7 @@
 										<div class="underline"></div>
 									</div>	
 									<div class="input-data margin-input margin-input-mobile">
-										<label class="margin-select margin-select-mobile" for="campo3">UF</label>
+										<label class="margin-select margin-select-mobile" for="campo3">Departamento</label>
 										<select class="form-select" name="gerente[depto]" style="padding:15px; !important" required>
 										<option value="" selected disabled>Selecionar</option>
 										<option value="Administrativo">Administrativo</option>

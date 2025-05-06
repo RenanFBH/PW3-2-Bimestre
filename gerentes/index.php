@@ -89,7 +89,7 @@
 									<div class="row">
 										<a href="view.php?id=<?php echo $gerente['id']; ?>" class="btn btn-custom-2 col-10 mt-1"><i class="fa fa-eye"></i> Visualizar</a>
 										<a href="edit.php?id=<?php echo $gerente['id']; ?>" class="btn btn-custom-2 col-10 mt-1"><i class="fa-solid fa-pen-to-square"></i> Editar</a>
-										<a href="#" class="btn btn-custom-2 col-10  mt-1" data-bs-toggle="modal" data-bs-target="#delete-modal" data-customer="<?php echo $gerente['id']; ?>">
+										<a href="#" class="btn btn-custom-2 col-10  mt-1" data-bs-toggle="modal" data-bs-target="#delete-modal-gerente" data-gerente="<?php echo $gerente['id']; ?>">
 											<i class="fa fa-trash"></i> Excluir
 										</a>
 									</div>
