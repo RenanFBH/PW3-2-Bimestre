@@ -47,8 +47,9 @@
             $this->SetY(-15);
             $this->SetFont('Arial', 'I', 8);
             $this->SetTextColor(0); // Texto preto
-            $this->Cell(0, 10, $this->converteTexto('Página ') . $this->PageNo() . $this->converteTexto(' de {nb}'), 0, 0, 'C');
-        }
+            $this->Cell(15, 10, $this->converteTexto('Página ') . $this->PageNo() . $this->converteTexto(' de {nb}'), 0, 0, 'C');
+			$this->Cell(0, 10, $this->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
+		}
 
         function Titulo($titulo) {
             $this->SetFillColor(191, 191, 191);

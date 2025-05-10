@@ -146,14 +146,15 @@
 		$pdf->Titulo("Lista de Clientes");
 
 		// Definir larguras das colunas (total não deve exceder 280mm em paisagem)
-		$larguras = [15, 50, 30, 30, 30, 25, 30, 30];
+		$larguras = [15, 50, 30, 30, 30, 25, 30, 21];
+
 		$headers = ['ID', 'Nome', 'CPF/CNPJ', 'Cidade', 'Estado', 'Telefone', 'Modificado', 'Foto'];
 
 		$pdf->Cabecalho($headers, $larguras);
 
 		$customers = $p ? filter("customers", "name LIKE '%$p%'") : find_all("customers");
 
-		$alturaFixa = 30;
+		$alturaFixa = 21;
 
 		foreach ($customers as $u) {
 
@@ -233,8 +234,9 @@
 			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
 			$foto = "fotos/" . $nomeFoto;
 
-			$larguraImagem = 25;
-			$alturaImagem = 25;
+			$larguraImagem = 15;
+			$alturaImagem = 15;
+
 			$offsetX = $x + ($larguras[7] - $larguraImagem) / 2;
 			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
 
@@ -252,13 +254,7 @@
 
 			$pdf->Ln();
 		}
-
-		// Adicionar data de emissão do relatório
-		$pdf->Ln(10);
-		$pdf->SetFont('Arial', 'I', 10);
-		$pdf->SetTextColor(0); // Texto preto
-		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
-
+		
 		ob_clean();
 		$pdf->Output('D', 'clientes_' . date('dmY') . '.pdf');
 		ob_end_flush();

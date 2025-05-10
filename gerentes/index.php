@@ -38,9 +38,9 @@
 						<div class="col-12 col-md-8 mt-2">
 							<div class="d-flex flex-column flex-md-row justify-content-md-end gap-2">
 								<a class="btn btn-custom-2" href="add.php"><i class="fa fa-plus"></i> Novo Gerente</a>
-<?php if($_SERVER["REQUEST_METHOD"] == "POST") : ?>
+<?php if($_SERVER["REQUEST_METHOD"] == "POST" and isset($_SESSION["user"])) : ?>
 								<a class="btn btn-custom-2" href="index.php?pdf=<?php echo $_POST['nome']; ?>" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
-<?php else : ?>
+<?php elseif (isset($_SESSION["user"])): ?>
 								<a class="btn btn-custom-2" href="index.php?pdf=ok" download><i class="fa-solid fa-file-pdf"></i> Gerar PDF</a>
 <?php endif; ?>
 								<a class="btn btn-custom-2" href="index.php"><i class="fa fa-refresh"></i> Atualizar</a>

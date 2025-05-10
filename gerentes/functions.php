@@ -150,14 +150,16 @@
 		$pdf->Titulo("Lista de Gerentes");
 
 		// Definir larguras das colunas (total não deve exceder 280mm em paisagem)
-		$larguras = [15, 50, 50, 50, 30, 30];
+		$larguras = [15, 50, 50, 50, 30, 21];
+
 		$headers = ['ID', 'Nome', 'Endereço', 'Departamento', 'Data Nasc.', 'Foto'];
 		
 		$pdf->Cabecalho($headers, $larguras);
 
-		$gerentes = $p ? filter("gerentes", "name LIKE '%$p%'") : find_all("gerentes");
+		$gerentes = $p ? filter("gerentes", "nome LIKE '%$p%'") : find_all("gerentes");
+		
+		$alturaFixa = 21;
 
-		$alturaFixa = 30;
 
 		foreach ($gerentes as $u) {
 
@@ -241,8 +243,8 @@
 			$pdf->Cell($larguras[5], $alturaFixa, '', 1, 0, 'C', true);
 			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
 			$foto = "fotos/" . $nomeFoto;
-			$larguraImagem = 25;
-			$alturaImagem = 25;
+			$larguraImagem = 15;
+			$alturaImagem = 15;
 			$offsetXImg = $xFoto + ($larguras[5] - $larguraImagem) / 2;
 			$offsetYImg = $yFoto + ($alturaFixa - $alturaImagem) / 2;
 			try {
@@ -257,13 +259,7 @@
 		
 			$pdf->Ln();
 		}
-
-		// Adicionar data de emissão do relatório
-		$pdf->Ln(10);
-		$pdf->SetFont('Arial', 'I', 10);
-		$pdf->SetTextColor(0); // Texto preto
-		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
-
+		
 		ob_clean();
 		$pdf->Output('D', 'gerentes_' . date('dmY') . '.pdf');
 		ob_end_flush();

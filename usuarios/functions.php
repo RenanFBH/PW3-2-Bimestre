@@ -232,11 +232,11 @@
 		include PDF;
 		$pdf = new PDF();
 		$pdf->AliasNbPages();
-		$pdf->AddPage('L'); // Paisagem
+		$pdf->AddPage('P'); // Retrato
 		$pdf->Titulo("Lista de Usuários");
 
-		// Larguras das colunas (em mm)
-		$larguras = [20, 80, 80, 40];
+		$larguras = [20, 80, 50, 20];
+
 		$headers = ['ID', 'Nome', 'Usuário', 'Foto'];
 
 		$pdf->Cabecalho($headers, $larguras);
@@ -249,8 +249,9 @@
 
 			// Cor alternada de fundo
 			$pdf->SetFillColor(($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255, ($u['id'] % 2 == 0) ? 240 : 255);
+			
+			$alturaLinha = 20;
 
-			$alturaLinha = 30;
 
 			$pdf->Cell($larguras[0], $alturaLinha, $u['id'], 1, 0, 'C', true);
 			$pdf->Cell($larguras[1], $alturaLinha, $pdf->converteTexto($u['nome']), 1, 0, 'C', true);
@@ -263,9 +264,8 @@
 
 			$nomeFoto = (!empty($u['foto']) && is_file("fotos/" . $u['foto'])) ? $u['foto'] : "semimagem.png";
 			$foto = "fotos/" . $nomeFoto;
-
-			$larguraImagem = 25;
-			$alturaImagem = 25;
+			$larguraImagem = 15;
+			$alturaImagem = 15;
 			$offsetX = $x + ($larguras[3] - $larguraImagem) / 2;
 			$offsetY = $y + ($alturaLinha - $alturaImagem) / 2;
 
@@ -281,12 +281,6 @@
 
 			$pdf->Ln();
 		}
-
-		// Data de emissão
-		$pdf->Ln(10);
-		$pdf->SetFont('Arial', 'I', 10);
-		$pdf->SetTextColor(0);
-		$pdf->Cell(0, 10, $pdf->converteTexto('Relatório emitido em: ' . date('d/m/Y H:i')), 0, 1, 'R');
 
 		ob_clean();
 		$pdf->Output('D', 'usuarios_' . date('dmY') . '.pdf');
