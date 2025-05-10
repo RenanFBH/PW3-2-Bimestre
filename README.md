@@ -1,0 +1,1 @@
+Crud em PDO com relatório PDF, feito em PHP, Etec Fernando Prestes, Programação Web 3, 3°DSMTECPI, 2025. É necessário alterar o caminho BASEURL do arquivo config.php para o nome da pasta raiz do projeto.
